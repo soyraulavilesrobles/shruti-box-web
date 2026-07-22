@@ -5,7 +5,17 @@ let audioCtx = null;
 let compressor = null;
 const drones = new Map(); // button -> { oscA, oscB, lfo, gain, filter }
 
+// En iOS, Web Audio queda mudo si el switch de silencio está activado, salvo
+// que la página también esté reproduciendo un <audio> real (categoría "playback").
+function unlockMobilePlayback() {
+  const unlockEl = document.getElementById("unlock");
+  if (unlockEl && unlockEl.paused) {
+    unlockEl.play().catch(() => {});
+  }
+}
+
 function ensureContext() {
+  unlockMobilePlayback();
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     compressor = audioCtx.createDynamicsCompressor();
