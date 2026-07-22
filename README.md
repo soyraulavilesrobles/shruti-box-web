@@ -4,10 +4,10 @@ Caja shruti virtual para navegador, construida con HTML/CSS/JS puro y la Web Aud
 
 ## Uso
 
-Abrí `index.html` en cualquier navegador moderno, o entrá a la versión publicada en GitHub Pages.
+Abre `index.html` en cualquier navegador moderno, o entra a la versión publicada en GitHub Pages.
 
-1. Elegí la tónica (Sa) con el selector.
-2. Tocá los botones de bordón (Sa grave, Sa, Ma, Pa, Sa agudo) para prenderlos/apagarlos. Se pueden combinar varios a la vez.
+1. Elige la tónica (Sa) con el selector.
+2. Toca los botones de bordón (Sa grave, Sa, Ma, Pa, Sa agudo) para prenderlos/apagarlos. Se pueden combinar varios a la vez.
 3. "Detener todo" corta todos los bordones activos.
 
 ## Cómo funciona
