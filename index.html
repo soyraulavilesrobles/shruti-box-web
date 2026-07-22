@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Shruti Box Virtual</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="box">
+    <header>
+      <h1>Caja Shruti Virtual</h1>
+      <p class="subtitle">Bordón continuo para práctica de canto y afinación</p>
+    </header>
+
+    <section class="tonic-selector" aria-label="Selector de tónica">
+      <label for="tonic">Tónica (Sa)</label>
+      <select id="tonic">
+        <option value="0">C</option>
+        <option value="1">C#</option>
+        <option value="2">D</option>
+        <option value="3">D#</option>
+        <option value="4">E</option>
+        <option value="5">F</option>
+        <option value="6">F#</option>
+        <option value="7">G</option>
+        <option value="8">G#</option>
+        <option value="9">A</option>
+        <option value="10">A#</option>
+        <option value="11">B</option>
+      </select>
+    </section>
+
+    <section class="drones" aria-label="Bordones">
+      <button class="drone-btn" data-semitones="-12" data-label="Sa (grave)">
+        <span class="swara">Sa</span><span class="oct">↓</span>
+      </button>
+      <button class="drone-btn" data-semitones="0" data-label="Sa">
+        <span class="swara">Sa</span>
+      </button>
+      <button class="drone-btn" data-semitones="5" data-label="Ma">
+        <span class="swara">Ma</span>
+      </button>
+      <button class="drone-btn" data-semitones="7" data-label="Pa">
+        <span class="swara">Pa</span>
+      </button>
+      <button class="drone-btn" data-semitones="12" data-label="Sa (agudo)">
+        <span class="swara">Sa</span><span class="oct">↑</span>
+      </button>
+    </section>
+
+    <button id="stopAll" class="stop-btn">Detener todo</button>
+
+    <p class="hint">Tocá una nota para empezar. El navegador necesita un clic para activar el audio.</p>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
