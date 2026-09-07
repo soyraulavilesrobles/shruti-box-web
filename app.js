@@ -3,26 +3,47 @@ const FADE_TIME = 0.6; // seconds, avoids clicks and mimics bellows swell
 
 let audioCtx = null;
 let compressor = null;
+let outputEl = null;
 const drones = new Map(); // button -> { oscA, oscB, lfo, gain, filter }
 
-// En iOS, Web Audio queda mudo si el switch de silencio está activado, salvo
-// que la página también esté reproduciendo un <audio> real (categoría "playback").
-function unlockMobilePlayback() {
-  const unlockEl = document.getElementById("unlock");
-  if (unlockEl && unlockEl.paused) {
-    unlockEl.play().catch(() => {});
-  }
+function setupMediaSession() {
+  if (!("mediaSession" in navigator)) return;
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title: "Caja Shruti Virtual",
+    artist: "Bordón continuo",
+  });
+  navigator.mediaSession.setActionHandler("play", () => ensureContext());
+  navigator.mediaSession.setActionHandler("pause", stopAllDrones);
+  navigator.mediaSession.setActionHandler("stop", stopAllDrones);
+}
+
+function updatePlaybackState() {
+  if (!("mediaSession" in navigator)) return;
+  navigator.mediaSession.playbackState = drones.size > 0 ? "playing" : "paused";
 }
 
 function ensureContext() {
-  unlockMobilePlayback();
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     compressor = audioCtx.createDynamicsCompressor();
-    compressor.connect(audioCtx.destination);
+
+    // Enrutamos toda la salida a través de un <audio> real (vía MediaStreamDestination)
+    // en vez de audioCtx.destination directo: los navegadores móviles solo permiten que
+    // el sonido siga con la pantalla apagada cuando viene de un elemento de medios real,
+    // no de un AudioContext "puro" — que se suspende al pasar a segundo plano.
+    const streamDest = audioCtx.createMediaStreamDestination();
+    compressor.connect(streamDest);
+
+    outputEl = document.getElementById("output");
+    outputEl.srcObject = streamDest.stream;
+
+    setupMediaSession();
   }
   if (audioCtx.state === "suspended") {
     audioCtx.resume();
+  }
+  if (outputEl && outputEl.paused) {
+    outputEl.play().catch(() => {});
   }
   return audioCtx;
 }
@@ -83,6 +104,7 @@ function startDrone(button) {
 
   drones.set(button, { oscA, oscB, lfo, gain, filter });
   button.classList.add("active");
+  updatePlaybackState();
 }
 
 function stopDrone(button) {
@@ -102,6 +124,11 @@ function stopDrone(button) {
 
   drones.delete(button);
   button.classList.remove("active");
+  updatePlaybackState();
+}
+
+function stopAllDrones() {
+  Array.from(drones.keys()).forEach(stopDrone);
 }
 
 function updateAllFrequencies() {
@@ -127,6 +154,4 @@ document.querySelectorAll(".drone-btn").forEach((button) => {
 
 document.getElementById("tonic").addEventListener("change", updateAllFrequencies);
 
-document.getElementById("stopAll").addEventListener("click", () => {
-  Array.from(drones.keys()).forEach(stopDrone);
-});
+document.getElementById("stopAll").addEventListener("click", stopAllDrones);
